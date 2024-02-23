@@ -87,7 +87,12 @@ final class ExceptionListener
                     'status_code' => Response::HTTP_BAD_REQUEST
                 ];
                 break;
-
+            case $exception instanceof PDOException:
+                $responseData = [
+                    'success' => false,
+                    'message' => 'Erreur lors de la connexion à la base de donnée!',
+                    'status_code' => Response::HTTP_SERVICE_UNAVAILABLE
+                ];
                 // -----------------------
                 // CUSTOM EXCEPTION
                 // -----------------------
@@ -123,6 +128,8 @@ final class ExceptionListener
                 $responseData = [
                     'success' => false,
                     'message' => 'Une erreur inopinée est survenue, merci de contacter un administrateur!',
+                    'error' => $exception->getMessage(),
+                    'trace' => $exception->getTrace(),
                     'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR
                 ];
         }

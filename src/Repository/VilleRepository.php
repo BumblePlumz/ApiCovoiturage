@@ -32,7 +32,7 @@ class VilleRepository extends ServiceEntityRepository
 
         // Extract code postaux from the result
         $codesPostaux = array_map(fn ($item) => $item['codePostal'], $result);
-
+        
         return $codesPostaux;
     }
     

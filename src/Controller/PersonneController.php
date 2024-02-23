@@ -68,7 +68,7 @@ class PersonneController extends AbstractController
 
         // Création de l'objet
         $personne = new Personne();
-        $personne->setlogin($login);
+        $personne->setPseudo($login);
         $personne->setPassword(password_hash($password, PASSWORD_BCRYPT));
         $personne->setRoles(['ROLE_USER']);
 

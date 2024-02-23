@@ -1,0 +1,12 @@
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Code-Quality.gitlab-ci.yml
+
+stages: 
+  - test
+
+job_analyse:
+  stage: test
+  script:
+    - echo "Analyse"
