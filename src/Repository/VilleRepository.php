@@ -21,6 +21,21 @@ class VilleRepository extends ServiceEntityRepository
         parent::__construct($registry, Ville::class);
     }
 
+    public function findAllCodesPostaux(): array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder
+            ->select('v.codePostal')
+            ->from(Ville::class, 'v');
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        // Extract code postaux from the result
+        $codesPostaux = array_map(fn ($item) => $item['codePostal'], $result);
+
+        return $codesPostaux;
+    }
+    
 //    /**
 //     * @return Ville[] Returns an array of Ville objects
 //     */

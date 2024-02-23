@@ -2,18 +2,12 @@
 
 namespace App\Utils;
 
-class ValidationException extends \Exception
+use Exception;
+
+class ValidationException extends Exception
 {
-    private $httpStatusCode;
-
-    public function __construct($message, $httpStatusCode = 400)
+    public function __construct($message, $statusCode = 400)
     {
-        parent::__construct($message);
-        $this->httpStatusCode = $httpStatusCode;
-    }
-
-    public function getHttpStatusCode()
-    {
-        return $this->httpStatusCode;
+        parent::__construct($message, $statusCode);
     }
 }

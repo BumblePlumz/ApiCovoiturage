@@ -19,7 +19,7 @@ class Validation
             throw new ValidationException('Veuillez entrer une chaîne de caractères valide');
         }
     }
-    
+
     public static function validateEmail($email): void
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -74,7 +74,7 @@ class Validation
             throw new ValidationException('Numéro de téléphone invalide (format: +33612345678 ou 0612345678)');
         }
     }
-    
+
     public static function nettoyage($string): string
     {
         $string = trim($string);
@@ -82,10 +82,32 @@ class Validation
         return $string;
     }
 
+    public static function validateBcryptPassword($password, $hash): void
+    {
+        if (!password_verify($password, $hash)) {
+            throw new ValidationException('Mot de passe incorrect');
+        }
+    }
+
     public static function validateExiste($variable): bool
     {
         return isset($variable) && !empty($variable);
     }
+
+    public static function validateNotNull($variable, $label = ""): void
+    {
+        if ($variable == null) {
+            throw new ValidationException('Veuillez entrer une valeur pour : ' . $label);
+        }
+    }
+
+    public static function validateDatetime($datetime): void
+    {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $datetime)) {
+            throw new ValidationException('Format de date et heure invalide. Utilisez le format "Y-m-d H:i"');
+        }
+    }
+
 
     public static function validateHas($request, $variable): bool
     {
