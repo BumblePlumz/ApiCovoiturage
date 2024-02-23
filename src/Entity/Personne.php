@@ -53,6 +53,9 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'personnes')]
     private ?Ville $ville = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: false)]
+    private ?bool $isActif = false;
+
     public function __construct()
     {
         $this->trajets = new ArrayCollection();
@@ -228,6 +231,18 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVille(?Ville $ville): static
     {
         $this->ville = $ville;
+
+        return $this;
+    }
+
+    public function isIsActif(): ?bool
+    {
+        return $this->isActif;
+    }
+
+    public function setIsActif(bool $isActif): static
+    {
+        $this->isActif = $isActif;
 
         return $this;
     }

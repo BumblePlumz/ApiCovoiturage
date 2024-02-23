@@ -1,6 +1,6 @@
 # API GitHub
 
-This project is an API that handle a carpool database.
+This project is an API that handles a carpool database.
 
 ## Getting Started
 
@@ -10,7 +10,17 @@ To get started with this project, follow the steps below:
 2. Install the required dependencies using `composer install`.
 3. Configure the database connection in the `.env` file.
 4. Run the database migrations using `php bin/console doctrine:migrations:migrate`.
-5. Start the development server using `symfony serve`.
+5. Load the admin fixture pour le compte administrateur `php bin/console doctrine:fixtures:load`
+6. Start the development server using `symfony serve`.
+
+## Default Admin User
+
+To access the API as an admin user, use the following credentials:
+
+- Username: admin
+- Password: admin
+
+> ⚠️ **Warning:** It is recommended to change the default admin password in a production environment.
 
 # Format datetime in URL
 

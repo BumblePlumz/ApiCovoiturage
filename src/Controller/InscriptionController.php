@@ -6,13 +6,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Utils\NotFoundException;
 use App\Utils\Validation;
-use DateTime;
-use Doctrine\ORM\Exception\ORMException;
 use App\Entity\Trajet;
 use App\Entity\Personne;
-use App\Utils\ValidationException;
 
 #[route('/inscription')]
 class InscriptionController extends AbstractController
@@ -46,8 +42,11 @@ class InscriptionController extends AbstractController
         // Récupération du trajet
         $trajet = $em->getRepository(Trajet::class)->find($idtrajet);
         Validation::validateExiste($trajet, 'Trajet introuvable !');
+
+        // Récupération du conducteur
         $conducteur = $trajet->getConducteur();
         $em->flush();
+
         return $this->json([
             'success' => true,
             'message' => 'liste des conducteurs',
@@ -66,8 +65,11 @@ class InscriptionController extends AbstractController
         // Récupération et vérification de la personne
         $personne = $em->getRepository(Personne::class)->find($idpers);
         Validation::validateExiste($personne, 'Personne introuvable !');
+
+        // Récupération des trajets de la personne
         $trajetsDeLaPersonne = $personne->getTrajets();
         $em->flush();
+
         return $this->json([
             'success' => true,
             'message' => 'liste des trajets de la personne',
@@ -78,10 +80,10 @@ class InscriptionController extends AbstractController
     public function insertInscription(EntityManagerInterface $em, $idpers, $idtrajet): JsonResponse
     {
         // Récupération et validation des données
-        $trajet = $em->getRepository(Trajet::class)->find($idtrajet);
-        Validation::validateExiste($trajet, 'Trajet introuvable !');
         $personne = $em->getRepository(Personne::class)->find($idpers);
         Validation::validateExiste($personne, 'Personne introuvable !');
+        $trajet = $em->getRepository(Trajet::class)->find($idtrajet);
+        Validation::validateExiste($trajet, 'Trajet introuvable !');
 
         // Mis à jour du trajet
         $trajet->setConducteur($personne);
@@ -94,7 +96,7 @@ class InscriptionController extends AbstractController
             'data' => $trajet,
         ], 200);
     }
-    
+
     #[Route('/delete/{idtrajet}', name: 'app_delete_passager', methods: "DELETE")]
     public function deletePassager(int $idtrajet, int $idpassager, EntityManagerInterface $em): JsonResponse
     {

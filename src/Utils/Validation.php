@@ -108,7 +108,6 @@ class Validation
         }
     }
 
-
     public static function validateHas($request, $variable): bool
     {
         return $request->request->has($variable);
