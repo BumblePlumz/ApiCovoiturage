@@ -3,7 +3,7 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
   - template: Code-Quality.gitlab-ci.yml
 
-stage: 
+stages: 
   - test
 
 job_analyse:
