@@ -5,7 +5,6 @@ namespace App\EventListener;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +18,8 @@ use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\Exception\NonUniqueFieldNameException;
 use App\Utils\ValidationException;
 use App\Utils\NotFoundException;
-
+use PDOException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class ExceptionListener
 {
@@ -69,7 +69,7 @@ final class ExceptionListener
             case $exception instanceof ConstraintViolationException:
                 $responseData = [
                     'success' => false,
-                    'message' => 'Une des données que vous avez entrées est invalide!',
+                    'message' => 'Une des données que vous avez entrées ne respecte pas une des contraintes!',
                     'status_code' => Response::HTTP_BAD_REQUEST
                 ];
                 break;
@@ -83,7 +83,7 @@ final class ExceptionListener
             case $exception instanceof NonUniqueFieldNameException:
                 $responseData = [
                     'success' => false,
-                    'message' => 'Erreur lors de la récupération des données!',
+                    'message' => 'Erreur lors de la requête un des champs est ambigu!',
                     'status_code' => Response::HTTP_BAD_REQUEST
                 ];
                 break;
@@ -106,20 +106,27 @@ final class ExceptionListener
             case $exception instanceof NotFoundException:
                 $responseData = [
                     'success' => false,
-                    'message' => $exception->getCode()
+                    'message' => $exception->getMessage(),
+                    'status_code' => $exception->getCode()
                 ];
                 break;
 
                 // -----------------------
                 // HTTP EXCEPTION
                 // -----------------------
-            case $exception instanceof HttpException:
+            case $exception instanceof NotFoundHttpException:
                 $responseData = [
                     'success' => false,
-                    'message' => $exception->getMessage(),
-                    'status_code' => $exception->getCode()
+                    'message' => 'La route n\'existe pas!',
+                    'status_code' => Response::HTTP_NOT_FOUND
                 ];
-                break;
+                // case $exception instanceof HttpException:
+                //     $responseData = [
+                //         'success' => false,
+                //         'message' => $exception->getMessage(),
+                //         'status_code' => $exception->getCode()
+                //     ];
+                //     break;
 
                 // -----------------------
                 // DEFAULT EXCEPTION
@@ -133,8 +140,8 @@ final class ExceptionListener
                     'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR
                 ];
         }
-
-        $response = new JsonResponse($responseData, $responseData['status_code']);
+        $prettyJson = json_encode($responseData, JSON_PRETTY_PRINT);
+        $response = new JsonResponse($prettyJson, $responseData['status_code'], [], true);
         $event->setResponse($response);
     }
 }

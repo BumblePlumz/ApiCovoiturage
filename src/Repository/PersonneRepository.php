@@ -40,6 +40,37 @@ class PersonneRepository extends ServiceEntityRepository implements PasswordUpgr
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * @return Personne[] Returns an array of Personne objects
+     */
+    public function findPassanger(): array
+    {
+        $em = $this->getEntityManager();
+        $personneRepository = $em->getRepository(Personne::class);
+        $query = $personneRepository->createQueryBuilder('p')
+            ->leftJoin('p.trajets', 't')
+            ->getQuery();
+        $personnesAvecTrajets = $query->getResult();
+        $em->flush();
+        return $personnesAvecTrajets;
+    }
+
+    public function findPersonneWithDependenciesById(int $id): ?Personne
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.ville', 'vi')    // Jointure avec la ville
+            ->leftJoin('p.trajets', 't')  // Jointure avec les trajets
+            ->leftJoin('p.voiture', 'vo') // Jointure avec la voiture
+            ->leftJoin('vo.marque', 'm')  // Jointure avec la marque de la voiture
+            ->andWhere('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    
+    
+    
+
     //    /**
     //     * @return Personne[] Returns an array of Personne objects
     //     */

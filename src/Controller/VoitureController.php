@@ -19,18 +19,34 @@ class VoitureController extends AbstractController
     {
         $repository = $em->getRepository(Voiture::class);
         $voitures = $repository->findAll();
+        $result = array_map(function($voiture) {
+            $marque = $voiture->getMarque();
+            $marqueDetails = [
+                'id' => $marque->getId(),
+                'nom' => $marque->getNom(),
+            ];
+        
+            return [
+                'id' => $voiture->getId(),
+                'modele' => $voiture->getModele(),
+                'place' => $voiture->getPlace(),
+                'immatriculation' => $voiture->getImmatriculation(),
+                'marque' => $marqueDetails,
+            ];
+        }, $voitures);
+        
 
         return $this->json([
             'success' => true,
             'message' => 'Liste des voitures',
-            'data' => $voitures,
+            'data' => $result,
         ], 200);
     }
-    #[Route('/insert/{modele},{place},{marqueId},{immatriculation}', name: 'app_voiture_insert', methods: "POST")]
+    #[Route('/insert/{modele}/{place}/{marqueId}/{immatriculation}', name: 'app_voiture_insert', methods: "POST")]
     public function insertVoiture(string $modele, int $place, int $marqueId, string $immatriculation, EntityManagerInterface $em): JsonResponse
     {
         // Validation des données
-        Validation::validateString($modele);
+        Validation::validateModele($modele);
         Validation::validateInt($place);
         Validation::validateInt($marqueId, 'Marque');
         Validation::validateImmatriculation($immatriculation, 'Immatriculation');

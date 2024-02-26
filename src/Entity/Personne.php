@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PersonneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,8 +18,8 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, nullable: true, unique: true)]
-    private ?string $email = null;
+    #[ORM\Column(length: 255, nullable: true, unique: true)]
+    private ?string $pseudo = null;
 
     /**
      * @var list<string> The user roles
@@ -41,20 +42,23 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 12, nullable: true)]
     private ?string $tel = null;
 
-    #[ORM\Column(length: 255, nullable: true, unique: true)]
-    private ?string $pseudo = null;
+    #[ORM\Column(length: 180, nullable: true, unique: true)]
+    private ?string $email = null;
 
-    #[ORM\ManyToOne(inversedBy: 'personnes')]
+    #[ORM\ManyToOne(inversedBy: 'personnes', cascade: ['persist'], fetch: "EAGER")]
     private ?Voiture $voiture = null;
 
-    #[ORM\ManyToMany(targetEntity: Trajet::class, mappedBy: 'passager')]
+    #[ORM\ManyToMany(targetEntity: Trajet::class, mappedBy: 'passager', fetch: "EAGER")]
     private Collection $trajets;
 
-    #[ORM\ManyToOne(inversedBy: 'personnes')]
+    #[ORM\ManyToOne(inversedBy: 'personnes', fetch: "EAGER")]
     private ?Ville $ville = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false], nullable: false)]
     private ?bool $isActif = false;
+
+    #[ORM\Column(type: Types::BLOB, nullable: true)]
+    private $token = null;
 
     public function __construct()
     {
@@ -246,4 +250,17 @@ class Personne implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    public function setToken($token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
 }

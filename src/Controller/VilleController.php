@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Ville;
+use App\Utils\NotFoundException;
 use App\Utils\Validation;
 
 #[Route('/ville')]
@@ -16,10 +17,18 @@ class VilleController extends AbstractController
     public function listeVIlle(EntityManagerInterface $em): JsonResponse
     {
         $villes = $em->getRepository(Ville::class)->findAll();
+        $result = array_map(function($ville) {
+            return [
+                'id' => $ville->getId(),
+                'nom' => $ville->getNom(),
+                'code_postal' => $ville->getCodePostal(),
+            ];
+        }, $villes);
+        
         return $this->json([
             'success' => true,
             'message' => 'Liste des villes',
-            'data' => $villes,
+            'data' => $result,
         ], 200);
     }
 
@@ -34,6 +43,33 @@ class VilleController extends AbstractController
         ], 200);
     }
 
+    #[Route('/trouver/{codePostal}', name: 'app_ville_trouver_codePostal', methods: "POST")]
+    public function findByCodePostal(string $codePostal, EntityManagerInterface $em): JsonResponse
+    {
+        // Vérification des données
+        Validation::validateCodePostal($codePostal);
+
+        // Nettoyage des données
+        $codePostal = Validation::nettoyage($codePostal);
+
+        // Recherche de la ville par code postal
+        $ville = $em->getRepository(Ville::class)->findOneBy(['codePostal' => $codePostal]);
+
+        // Vérifier si la ville existe
+        Validation::validateNotNull($ville, $codePostal);
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Ville trouvée',
+            'data' => [
+                'id' => $ville->getId(),
+                'nom' => $ville->getNom(),
+                'code_postal' => $ville->getCodePostal(),
+            ],
+        ], 200);
+    }
+
+
     #[Route('/insert/{nom}/{cp}', name: 'app_ville_insert', methods: "POST")]
     public function insertVille(string $nom, string $cp, EntityManagerInterface $em): JsonResponse
     {
@@ -43,6 +79,7 @@ class VilleController extends AbstractController
 
         // Nettoyage des données
         $nom = Validation::nettoyage($nom);
+        $nom = Validation::toUpper($nom);
         $cp = Validation::nettoyage($cp);
 
         // Création de l'objet
@@ -67,11 +104,18 @@ class VilleController extends AbstractController
         Validation::validateInt($id);
 
         // Nettoyage des données
-        $idNettoyer = Validation::nettoyage($id);
+        $id = Validation::nettoyage($id);
+
+        // Récupérer la ville
+        $ville = $em->getRepository(Ville::class)->find($id);
+
+        // Vérifier si la ville existe
+        Validation::validateNotNull($ville, $id);
 
         // Suppression de l'objet
-        $em->getRepository(Ville::class)->delete($idNettoyer);
+        $em->remove($ville);
         $em->flush();
+
         return $this->json([
             'success' => true,
             'message' => 'Ville supprimée',

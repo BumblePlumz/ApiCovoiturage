@@ -6,16 +6,21 @@ security:
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
-            entity:
-                class: App\Entity\Personne
-                property: email
+            id: App\Provider\TokenUserProvider
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+            custom_authenticators:
+                - App\Security\TokenAuthAuthenticator
         main:
+            stateless: true
             lazy: true
             provider: app_user_provider
+            custom_authenticators:
+                - App\Security\TokenAuthAuthenticator
+            entry_point: App\Security\TokenAuthAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -23,12 +28,51 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+        registration_and_login:
+            pattern: ^/personne/(register|login)
+            security: false
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
-
+        # Documentation routes
+        - { path: ^/docs, roles: PUBLIC_ACCESS }
+        # Marque routes
+        - { path: ^/marque/liste, roles: ROLE_USER }
+        - { path: ^/marque/liste/voiture, roles: ROLE_USER }
+        - { path: ^/marque/insert, roles: ROLE_USER }
+        - { path: ^/marque/delete, roles: ROLE_USER }
+        # Voiture routes
+        - { path: ^/voiture/liste, roles: ROLE_USER }
+        - { path: ^/voiture/insert, roles: ROLE_USER}
+        - { path: ^/voiture/delete, roles: ROLE_USER }
+        # Ville routes
+        - { path: ^/ville/liste, roles: ROLE_USER }
+        - { path: ^/ville/liste/codePostal, roles: ROLE_USER }
+        - { path: ^/ville/insert, roles: ROLE_USER }
+        - { path: ^/ville/trouver, roles: ROLE_USER }
+        - { path: ^/ville/delete, roles: ROLE_USER }
+        # Personne routes
+        - { path: ^/personne/liste, roles: ROLE_USER }
+        - { path: ^/personne/liste/inactif, roles: ROLE_USER }
+        - { path: ^/personne/select, roles: ROLE_USER }
+        - { path: ^/personne/insert, roles: ROLE_USER }
+        - { path: ^/personne/update, roles: ROLE_USER }
+        - { path: ^/personne/update-actif, roles: ROLE_ADMIN }
+        - { path: ^/personne/delete, roles: ROLE_USER }
+        # Trajet routes
+        - { path: ^/trajet/liste, method: [GET], roles: ROLE_USER }
+        - { path: ^/trajet/recherche, roles: ROLE_USER }
+        - { path: ^/trajet/liste, method: [POST], roles: ROLE_USER }
+        - { path: ^/trajet/insert, roles: ROLE_USER }
+        - { path: ^/trajet/update-status, roles: ROLE_USER }
+        - { path: ^/trajet/delete, roles: ROLE_USER}
+        # Inscription routes
+        - { path: ^/inscription/, roles: ROLE_USER }
+        - { path: ^/inscription/, roles: ROLE_USER }
+        - { path: ^/inscription/, roles: ROLE_USER }
+        - { path: ^/inscription/, roles: ROLE_USER }
+        - { path: ^/inscription/, roles: ROLE_USER }
 when@test:
     security:
         password_hashers:

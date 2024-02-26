@@ -23,7 +23,8 @@ class VilleRepository extends ServiceEntityRepository
 
     public function findAllCodesPostaux(): array
     {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $em = $this->getEntityManager();
+        $queryBuilder = $em->createQueryBuilder();
         $queryBuilder
             ->select('v.codePostal')
             ->from(Ville::class, 'v');

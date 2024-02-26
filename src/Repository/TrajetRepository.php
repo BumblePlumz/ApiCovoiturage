@@ -21,6 +21,16 @@ class TrajetRepository extends ServiceEntityRepository
         parent::__construct($registry, Trajet::class);
     }
 
+    public function findAllWithAllDependencies(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.departVille', 'dv')
+            ->leftJoin('t.arriverVille', 'av')
+            ->leftJoin('t.passager', 'p')
+            ->leftJoin('t.conducteur', 'c')
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Trajet[] Returns an array of Trajet objects
 //     */

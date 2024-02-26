@@ -20,7 +20,7 @@ class AdminFixtures extends Fixture
     {
         $user = new Personne();
         $user->setPseudo('admin');
-        $user->setRoles(['ROLE_ADMIN']);
+        $user->setRoles(['ROLE_ADMIN, ROLE_USER']);
         $user->setPassword($this->passwordHasher->hashPassword($user, 'admin'));
         $user->setIsActif(true);
 

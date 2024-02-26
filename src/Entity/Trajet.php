@@ -16,9 +16,6 @@ class Trajet
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateDepart = null;
-
     #[ORM\Column(nullable: true)]
     private ?int $kms = null;
 
@@ -36,12 +33,18 @@ class Trajet
     #[ORM\JoinColumn(nullable: false)]
     private ?Ville $arriverVille = null;
 
-    #[ORM\ManyToMany(targetEntity: Personne::class, inversedBy: 'trajets')]
+    #[ORM\ManyToMany(targetEntity: Personne::class, inversedBy: 'trajets', fetch: "EAGER")]
     private Collection $passager;
 
-    #[ORM\ManyToOne(inversedBy: 'trajets')]
+    #[ORM\ManyToOne(inversedBy: 'trajets', fetch: "EAGER")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Personne $conducteur = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateDepart = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $heureDepart = null;
 
     public function __construct()
     {
@@ -51,18 +54,6 @@ class Trajet
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDateDepart(): ?\DateTimeInterface
-    {
-        return $this->dateDepart;
-    }
-
-    public function setDateDepart(\DateTimeInterface $dateDepart): static
-    {
-        $this->dateDepart = $dateDepart;
-
-        return $this;
     }
 
     public function getKms(): ?int
@@ -157,6 +148,30 @@ class Trajet
     public function setConducteur(?Personne $conducteur): static
     {
         $this->conducteur = $conducteur;
+
+        return $this;
+    }
+
+    public function getDateDepart(): ?\DateTimeInterface
+    {
+        return $this->dateDepart;
+    }
+
+    public function setDateDepart(?\DateTimeInterface $dateDepart): static
+    {
+        $this->dateDepart = $dateDepart;
+
+        return $this;
+    }
+
+    public function getHeureDepart(): ?\DateTimeInterface
+    {
+        return $this->heureDepart;
+    }
+
+    public function setHeureDepart(?\DateTimeInterface $heureDepart): static
+    {
+        $this->heureDepart = $heureDepart;
 
         return $this;
     }

@@ -15,10 +15,10 @@ class Marque
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 60)]
+    #[ORM\Column(length: 60, unique: true)]
     private ?string $nom = null;
 
-    #[ORM\OneToMany(targetEntity: Voiture::class, mappedBy: 'marque')]
+    #[ORM\OneToMany(targetEntity: Voiture::class, mappedBy: 'marque', fetch: "EAGER")]
     private Collection $voitures;
 
     public function __construct()
@@ -72,4 +72,5 @@ class Marque
 
         return $this;
     }
+
 }

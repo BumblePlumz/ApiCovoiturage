@@ -18,10 +18,10 @@ class Ville
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 5)]
+    #[ORM\Column(length: 5, unique: true)]
     private ?string $codePostal = null;
 
-    #[ORM\OneToMany(targetEntity: Personne::class, mappedBy: 'ville')]
+    #[ORM\OneToMany(targetEntity: Personne::class, mappedBy: 'ville', fetch: "EAGER")]
     private Collection $personnes;
 
     public function __construct()

@@ -24,10 +24,10 @@ class Voiture
     #[ORM\Column(length: 12, nullable: false, unique: true)]
     private ?string $immatriculation = null;
 
-    #[ORM\ManyToOne(inversedBy: 'voitures')]
+    #[ORM\ManyToOne(inversedBy: 'voitures', cascade: ['persist'], fetch: "EAGER")]
     private ?Marque $marque = null;
 
-    #[ORM\OneToMany(targetEntity: Personne::class, mappedBy: 'voiture')]
+    #[ORM\OneToMany(targetEntity: Personne::class, mappedBy: 'voiture', fetch: "EAGER")]
     private Collection $personnes;
 
     public function __construct()
