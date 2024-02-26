@@ -24,7 +24,8 @@ To access the API as an admin user, use the following credentials:
 
 # Format datetime in URL
 
-The datetime format in the URL is in the format: Y-m-d H:i
+The date format in the URL is in the format: Y-m-d 
+The time format in the URL is in the format: H:i
 
 ## Error Handling
 
@@ -41,13 +42,13 @@ By centralizing error handling in a listener, we can ensure consistent error res
 
 ## API Documentation
 
-For detailed documentation on the API endpoints and how to use them, refer to the [API Documentation](./docs/api.md) file.
-
-## Contributing
-
-If you would like to contribute to this project, please follow the guidelines outlined in the [CONTRIBUTING.md](./CONTRIBUTING.md) file.
+For detailed documentation on the API endpoints and how to use them, refer to the swagger-ui documentation.
+The link is your "server/api/doc" for symfony localhost => [API Documentation](localhost:8000/api/doc).
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
+Made by : BumblePlumz
+
+This project is licensed under the [Open Source License](link-to-license). You are free to use, modify, and distribute this software for both personal and commercial purposes. Please refer to the license file for more details.
+
 
